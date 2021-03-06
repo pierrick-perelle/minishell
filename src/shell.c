@@ -128,13 +128,18 @@ int main()
 					old_fds[1] = new_fds[1];
 				}
 
-				Wait(&status);
 			}
 		}
+
+		while(waitpid(-1,NULL,0) > 0);
+
 		if(i > 1){
 			/* multiple cmds */
 			close(old_fds[0]);
     		close(old_fds[1]);
+		}
+		if(l->bg){
+			//do smth.
 		}
 	}
 }
