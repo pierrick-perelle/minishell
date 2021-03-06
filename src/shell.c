@@ -50,19 +50,19 @@ int main()
 				if(l->out){
 					int fd_out = open(l->out, O_CREAT | O_WRONLY | O_TRUNC, 0744);
 					if (fd_out == -1)
-						perror("open");
+						fprintf(stderr,"%s: %s \n",l->out,"permission denied");
 					dup2(fd_out, 1);
 					close(fd_out);
 				}
 				if(l->in){
 					int fd_in = open(l->in, O_CREAT | O_RDONLY, 0744);
 					if (fd_in == -1)
-						perror("open");
+						fprintf(stderr,"%s: %s \n",l->in,"permission denied");
 					dup2(fd_in, 0);
 					close(fd_in);
 				}
 				if (execvp(cmd[0],cmd)<0){
-					fprintf(stderr,"%s : %s \n",cmd[0],"command not found");
+					fprintf(stderr,"%s: %s \n",cmd[0],"command not found");
 					exit(1);
 				}
 
