@@ -95,6 +95,10 @@ static char **split_in_words(char *line)
 			w = "|";
 			cur++;
 			break;
+		case '&':
+			w = "&";
+			cur++;
+			break;
 		default:
 			/* Another word */
 			start = cur;
@@ -107,6 +111,7 @@ static char **split_in_words(char *line)
 				case '<':
 				case '>':
 				case '|':
+				case '&':
 					c = 0;
 					break;
 				default: ;
@@ -144,6 +149,7 @@ static void freeseq(char ***seq)
 /* Free the fields of the structure but not the structure itself */
 static void freecmd(struct cmdline *s)
 {
+	if (s->bg) free(s->bg);
 	if (s->in) free(s->in);
 	if (s->out) free(s->out);
 	if (s->seq) freeseq(s->seq);
@@ -185,6 +191,7 @@ struct cmdline *readcmd(void)
 		static_cmdline = s = xmalloc(sizeof(struct cmdline));
 	else
 		freecmd(s);
+	s->bg = 0;
 	s->err = 0;
 	s->in = 0;
 	s->out = 0;
@@ -232,6 +239,18 @@ struct cmdline *readcmd(void)
 			cmd[0] = 0;
 			cmd_len = 0;
 			break;
+		case '&':
+			/* Tricky : the word can only be "&" */
+			if (cmd_len == 0) {
+				s->err = "misplaced &";
+				goto error;
+			}
+			if (s->in) {
+				s->err = "only one background supported";
+				goto error;
+			}
+
+			s->bg = "1";
 		default:
 			cmd = xrealloc(cmd, (cmd_len + 2) * sizeof(char *));
 			cmd[cmd_len++] = w;
@@ -258,6 +277,7 @@ error:
 		case '<':
 		case '>':
 		case '|':
+		case '&':
 			break;
 		default:
 			free(w);
