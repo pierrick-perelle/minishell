@@ -10,6 +10,16 @@
 #include "csapp.h"
 #include <signal.h>
 
+/*void sigint_handler(int sig){
+	printf("sigint catched \n");
+	kill(-1,SIGINT);
+    return;
+}
+
+void sigtstp_handler(int sig){
+	printf("sigtstp catched \n");
+}*/
+
 
 int main(){
 	int status;
@@ -19,6 +29,10 @@ int main(){
 	//killing zombies see POSIX.1-2001 about SIGCHLD SIG_IGN.
 	//waitpid(-1, &status, WNOHANG|WUNTRACED) not used, SIGCHLD instead.
 	signal(SIGCHLD, SIG_IGN);
+
+	/*signal(SIGINT, sigint_handler);
+
+	signal(SIGTSTP, sigtstp_handler);*/
 
 	while (1) {
 		struct cmdline *l;
