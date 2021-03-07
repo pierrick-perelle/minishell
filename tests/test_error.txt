@@ -1,0 +1,4 @@
+#
+# test_error.txt - Teste une command inexistant, devrait retourner "command : command not found"
+#
+dvefa

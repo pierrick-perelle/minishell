@@ -1,0 +1,4 @@
+#
+# test_tube.txt - teste une séquence de commandes composée de deux commandes reliées par un tube 
+#
+ls | wc

@@ -1,0 +1,4 @@
+#
+# test_tubes.txt - teste une séquence de commandes composée de plusieurs commandes et plusieurs tubes
+#
+ls | cat | cat | cat | cat | wc 

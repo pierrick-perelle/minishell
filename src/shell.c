@@ -127,7 +127,6 @@ int main(){
 		}
 
 		if(l->bg){
-			printf("is bg \n");
 			//do nothing.
 		}
 
