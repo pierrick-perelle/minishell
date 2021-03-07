@@ -117,11 +117,11 @@ int main(){
 				}
 			}
 		}
+
 		if(l->bg){
-			printf("in");
-			signal(SIGCHLD, SIG_IGN);
+			//signal(SIGCHLD, SIG_IGN);
 		}else{
-			while(waitpid(-1,NULL,0) > 0);
+			waitpid(-1,NULL,0);
 		}
 
 		if(i > 1){
