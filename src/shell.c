@@ -8,10 +8,10 @@
 #include <unistd.h>
 #include "readcmd.h"
 #include "csapp.h"
+#include <signal.h>
 
 
-int main()
-{
+int main(){
 	int status;
 
 	int old_fds[2], new_fds[2];
@@ -35,20 +35,8 @@ int main()
 			continue;
 		}
 
-		if (l->in) printf("in: %s\n", l->in);
-		if (l->out) printf("out: %s\n", l->out);
-
-		/* nbpipe */
-
-		/*int nbpipe = 0;
-		char** cur_cmd = l->seq[nbpipe];
-		
-		while(cur_cmd != NULL){
-			nbpipe++;
-			cur_cmd = l->seq[nbpipe];
-		}
-		nbpipe--;
-		printf("number of cmd : %i \n", nbpipe);*/
+		/*if (l->in) printf("in: %s\n", l->in);
+		if (l->out) printf("out: %s\n", l->out);*/
 
 
 		/* Display each command of the pipe */
@@ -127,19 +115,19 @@ int main()
 					old_fds[0] = new_fds[0];
 					old_fds[1] = new_fds[1];
 				}
-
 			}
 		}
-
-		while(waitpid(-1,NULL,0) > 0);
+		if(l->bg){
+			printf("in");
+			signal(SIGCHLD, SIG_IGN);
+		}else{
+			while(waitpid(-1,NULL,0) > 0);
+		}
 
 		if(i > 1){
 			/* multiple cmds */
 			close(old_fds[0]);
     		close(old_fds[1]);
-		}
-		if(l->bg){
-			//do smth.
 		}
 	}
 }
