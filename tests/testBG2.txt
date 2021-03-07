@@ -1,0 +1,6 @@
+#
+# testBG2.txt - Tester un programme de 10 sec. en background, un programme de 10 sec. en foreground et une instruction
+#
+./pause10 &
+./pause10
+ls

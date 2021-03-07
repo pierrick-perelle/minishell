@@ -16,7 +16,9 @@ int main(){
 
 	int old_fds[2], new_fds[2];
 
-	signal(SIGCHLD, SIG_IGN); //killing zombies see POSIX.1-2001 about SIGCHLD SIG_IGN.
+	//killing zombies see POSIX.1-2001 about SIGCHLD SIG_IGN.
+	//waitpid(-1, &status, WNOHANG|WUNTRACED) not used, SIGCHLD instead.
+	signal(SIGCHLD, SIG_IGN);
 
 	while (1) {
 		struct cmdline *l;
@@ -62,6 +64,8 @@ int main(){
 
 				if(l->bg){
 					/*is bg */
+					/* if process is a background one
+					change his stpgid(), so waitpid(0,..) will not wait for bg process. */
 					setpgid(0, 0);
 				}
 
@@ -129,8 +133,11 @@ int main(){
 		if(l->bg){
 			//do nothing.
 		}
-
 		else{
+			/* waiting for process with the same GID as the caller
+			bg process have a different GID so waitpid don't wait for them 
+			thanks to signal(SIGCHLD, SIG_IGN); */
+
 			waitpid(0,&status,0);
 		}
 
