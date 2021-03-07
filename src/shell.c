@@ -16,6 +16,8 @@ int main(){
 
 	int old_fds[2], new_fds[2];
 
+	signal(SIGCHLD, SIG_IGN); //killing zombies see POSIX.1-2001 about SIGCHLD SIG_IGN.
+
 	while (1) {
 		struct cmdline *l;
 		int i, j;
@@ -25,7 +27,7 @@ int main(){
 
 		/* If input stream closed, normal termination */
 		if (!l || !strcmp(l->seq[0][0],"quit")) {
-			printf("exit\n");
+			//printf("exit\n");
 			exit(0);
 		}
 
@@ -57,6 +59,11 @@ int main(){
 			if(Fork()==0){
 
 				/* Fils */
+
+				if(l->bg){
+					/*is bg */
+					setpgid(0, 0);
+				}
 
 				if(i > 0){
 					/*there is a previous command */
@@ -115,13 +122,19 @@ int main(){
 					old_fds[0] = new_fds[0];
 					old_fds[1] = new_fds[1];
 				}
+
 			}
 		}
 
 		if(l->bg){
-			//signal(SIGCHLD, SIG_IGN);
-		}else{
-			waitpid(-1,NULL,0);
+			printf("is bg \n");
+			//do nothing.
+		}
+
+		else{
+			printf("fg start \n");
+			waitpid(0,&status,0);
+			printf("fg done \n");
 		}
 
 		if(i > 1){
