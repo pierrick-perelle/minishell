@@ -132,9 +132,7 @@ int main(){
 		}
 
 		else{
-			printf("fg start \n");
 			waitpid(0,&status,0);
-			printf("fg done \n");
 		}
 
 		if(i > 1){
