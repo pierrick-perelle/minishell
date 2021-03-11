@@ -36,21 +36,22 @@ int main(){
 
 	while (1) {
 		struct cmdline *l;
-		int i, j;
+		int i;
+		//int j;
 
 		printf("shell> ");
 		l = readcmd();
-
-		/* If input stream closed, normal termination */
-		if (!l || !strcmp(l->seq[0][0],"quit")) {
-			//printf("exit\n");
-			exit(0);
-		}
 
 		if (l->err) {
 			/* Syntax error, read another command */
 			printf("error: %s\n", l->err);
 			continue;
+		}
+
+		/* If input stream closed, normal termination */
+		if (!l ||(l->seq[0] && !strcmp(l->seq[0][0],"quit"))) {
+			//printf("exit\n");
+			exit(0);
 		}
 
 		/*if (l->in) printf("in: %s\n", l->in);
@@ -61,17 +62,16 @@ int main(){
 
 		for (i=0; l->seq[i]!=0; i++) {
 			char **cmd = l->seq[i];
-			printf("seq[%d]: ", i);
-			for (j=0; cmd[j]!=0; j++) {
+			/*for (j=0; cmd[j]!=0; j++) {
 				printf("%s ", cmd[j]);
-			}
+			}*/
 
 			if(l->seq[i+1] != NULL){
 				/*there is a next command */
 				pipe(new_fds);
 			}
 
-			printf("\n");
+			//printf("\n");
 			if(Fork()==0){
 
 				/* Fils */
@@ -94,7 +94,8 @@ int main(){
 					/*there is an input*/
 					int fd_in = open(l->in, O_CREAT | O_RDONLY, 0744);
 					if (fd_in == -1){
-						fprintf(stderr,"%s: %s \n",l->in,"permission denied");
+						fprintf(stderr,"%s: %s \n",l->out,"permission denied");
+						//perror(l->in);
 					} else {
 						dup2(fd_in, 0);
 						close(fd_in);
@@ -113,6 +114,7 @@ int main(){
 					int fd_out = open(l->out, O_CREAT | O_WRONLY | O_TRUNC, 0744);
 					if (fd_out == -1){
 						fprintf(stderr,"%s: %s \n",l->out,"permission denied");
+						//perror(l->out);
 						exit(1);
 					} else {
 						dup2(fd_out, 1);
@@ -122,6 +124,7 @@ int main(){
 
 				if (execvp(cmd[0],cmd)<0){
 					fprintf(stderr,"%s: %s \n",cmd[0],"command not found");
+					//perror(cmd[0]);
 					exit(1);
 				}
 
